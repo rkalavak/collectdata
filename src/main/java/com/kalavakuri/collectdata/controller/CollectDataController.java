@@ -1,10 +1,9 @@
 package com.kalavakuri.collectdata.controller;
 
+import com.kalavakuri.collectdata.info.FailedData;
 import com.kalavakuri.collectdata.thread.TriggerThread;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 public class CollectDataController {
@@ -20,7 +19,7 @@ public class CollectDataController {
     }
 
     @GetMapping("/getFailedCodes")
-    public List<String> getFailedNirmalBangSymbols() {
+    public FailedData getFailedNirmalBangSymbols() {
         return TriggerThread.getFailedNirmalBangSymbols();
     }
 

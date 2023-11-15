@@ -1,6 +1,7 @@
 package com.kalavakuri.collectdata.thread;
 
 import org.jsoup.Connection;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -14,11 +15,13 @@ public class CollectDataThread implements Runnable {
     private final String nirmalBangCode;
     private final List<String> failedNirmalBangSymbols;
     private final CountDownLatch countDownLatch;
+    private final List<String> completelyFailedSymbols;
 
-    public CollectDataThread(String nirmalBangCode, List<String> failedNirmalBangSymbols, CountDownLatch countDownLatch) {
+    public CollectDataThread(String nirmalBangCode, List<String> failedNirmalBangSymbols, CountDownLatch countDownLatch, List<String> completelyFailedSymbols) {
         this.nirmalBangCode = nirmalBangCode;
         this.failedNirmalBangSymbols = failedNirmalBangSymbols;
         this.countDownLatch = countDownLatch;
+        this.completelyFailedSymbols = completelyFailedSymbols;
     }
 
     @Override
@@ -27,6 +30,12 @@ public class CollectDataThread implements Runnable {
         try {
             failedNirmalBangSymbols.remove(nirmalBangCode);
             extractDocument(nirmalBangCode);
+        } catch (HttpStatusException e) {
+            if (e.getStatusCode() == 404) {
+                completelyFailedSymbols.add(nirmalBangCode);
+            } else {
+                failedNirmalBangSymbols.add(nirmalBangCode);
+            }
         } catch (Exception e) {
             failedNirmalBangSymbols.add(nirmalBangCode);
         } finally {

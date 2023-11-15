@@ -1,5 +1,7 @@
 package com.kalavakuri.collectdata.thread;
 
+import com.kalavakuri.collectdata.info.FailedData;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -10,11 +12,13 @@ public class TriggerThread implements Runnable {
 
     private static List<String> failedNirmalBangSymbols = null;
     private static String currentRunningCode = null;
+    private static List<String> completelyFailedSymbols = null;
 
     @Override
     public void run() {
 
         failedNirmalBangSymbols = new CopyOnWriteArrayList<>();
+        completelyFailedSymbols = new CopyOnWriteArrayList<>();
 
         String nirmalBangCode;
 
@@ -27,7 +31,7 @@ public class TriggerThread implements Runnable {
 
                 nirmalBangCode = String.valueOf(j).replace(".0", "");
                 currentRunningCode = nirmalBangCode;
-                CollectDataThread collectDataThread = new CollectDataThread(nirmalBangCode, failedNirmalBangSymbols, countDownLatch);
+                CollectDataThread collectDataThread = new CollectDataThread(nirmalBangCode, failedNirmalBangSymbols, countDownLatch, completelyFailedSymbols);
                 executorService.submit(collectDataThread);
             }
 
@@ -47,7 +51,7 @@ public class TriggerThread implements Runnable {
 
                 failedNirmalBangSymbols.forEach(v -> {
 
-                    CollectDataThread collectDataThread = new CollectDataThread(v, failedNirmalBangSymbols, countDownLatchRetry);
+                    CollectDataThread collectDataThread = new CollectDataThread(v, failedNirmalBangSymbols, countDownLatchRetry, completelyFailedSymbols);
                     executorServiceRetry.submit(collectDataThread);
                 });
 
@@ -63,8 +67,12 @@ public class TriggerThread implements Runnable {
         }
     }
 
-    public static List<String> getFailedNirmalBangSymbols() {
-        return failedNirmalBangSymbols;
+    public static FailedData getFailedNirmalBangSymbols() {
+
+        FailedData failedData = new FailedData();
+        failedData.setFailedNirmalBangSymbols(failedNirmalBangSymbols);
+        failedData.setCompletelyFailedSymbols(completelyFailedSymbols);
+        return failedData;
     }
 
     public static String getCurrentRunningCode() {
