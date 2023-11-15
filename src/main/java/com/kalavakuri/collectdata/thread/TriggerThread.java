@@ -39,33 +39,28 @@ public class TriggerThread implements Runnable {
             }
 
             executorService.shutdown();
+
+            while (failedNirmalBangSymbols.size() != 0) {
+
+                ExecutorService executorServiceRetry = Executors.newFixedThreadPool(failedNirmalBangSymbols.size());
+                CountDownLatch countDownLatchRetry = new CountDownLatch(failedNirmalBangSymbols.size());
+
+                failedNirmalBangSymbols.forEach(v -> {
+
+                    CollectDataThread collectDataThread = new CollectDataThread(v, failedNirmalBangSymbols, countDownLatchRetry);
+                    executorServiceRetry.submit(collectDataThread);
+                });
+
+                try {
+                    countDownLatch.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    System.exit(0);
+                }
+
+                executorServiceRetry.shutdown();
+            }
         }
-
-        failedNirmalBangSymbols.forEach(System.out::println);
-
-        System.out.println("Retrying for failed codes.");
-
-        ExecutorService executorService = Executors.newFixedThreadPool(failedNirmalBangSymbols.size());
-        CountDownLatch countDownLatch = new CountDownLatch(failedNirmalBangSymbols.size());
-
-        failedNirmalBangSymbols.forEach(v -> {
-
-            CollectDataThread collectDataThread = new CollectDataThread(v, failedNirmalBangSymbols, countDownLatch);
-            executorService.submit(collectDataThread);
-        });
-
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(0);
-        }
-
-        System.out.println("Remaining failed jobs");
-
-        failedNirmalBangSymbols.forEach(System.out::println);
-
-        executorService.shutdown();
     }
 
     public static List<String> getFailedNirmalBangSymbols() {
