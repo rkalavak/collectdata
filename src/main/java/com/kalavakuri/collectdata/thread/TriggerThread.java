@@ -16,7 +16,7 @@ public class TriggerThread implements Runnable {
 
         failedNirmalBangSymbols = new CopyOnWriteArrayList<>();
 
-        String nirmalBangCode = "";
+        String nirmalBangCode;
 
         for (double i = 100000; i <= 999999; i = i + 1001) {
 
