@@ -25,8 +25,8 @@ public class CollectDataThread implements Runnable {
     public void run() {
 
         try {
-            extractDocument(nirmalBangCode);
             failedNirmalBangSymbols.remove(nirmalBangCode);
+            extractDocument(nirmalBangCode);
         } catch (Exception e) {
             failedNirmalBangSymbols.add(nirmalBangCode);
         } finally {
