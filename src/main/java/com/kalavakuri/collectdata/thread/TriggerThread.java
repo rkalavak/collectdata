@@ -52,7 +52,7 @@ public class TriggerThread implements Runnable {
                 });
 
                 try {
-                    countDownLatch.await();
+                    countDownLatchRetry.await();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                     System.exit(0);
