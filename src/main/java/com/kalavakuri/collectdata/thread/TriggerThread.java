@@ -22,12 +22,12 @@ public class TriggerThread implements Runnable {
 
         String nirmalBangCode;
 
-        for (double i = 100000; i <= 999999; i = i + 1001) {
+        for (double i = 100000; i <= 999999; i = i + 2001) {
 
-            ExecutorService executorService = Executors.newFixedThreadPool(1000);
-            CountDownLatch countDownLatch = new CountDownLatch(1000);
+            ExecutorService executorService = Executors.newFixedThreadPool(2000);
+            CountDownLatch countDownLatch = new CountDownLatch(2000);
 
-            for (double j = i; (j <= i + 1000 && j <= 999999); j++) {
+            for (double j = i; (j <= i + 2000 && j <= 999999); j++) {
 
                 nirmalBangCode = String.valueOf(j).replace(".0", "");
                 currentRunningCode = nirmalBangCode;
